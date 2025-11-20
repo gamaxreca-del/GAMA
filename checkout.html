@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIMHACK — Checkout</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    .coupon-box { border: 2px solid #ff0000; border-radius: 10px; padding: 11px 12px 14px 12px; margin: 12px 0 15px 0; background: none; box-shadow: none; display:flex; flex-direction:column; align-items:stretch;}
+    .coupon-header { display:flex; align-items:center; gap:8px; margin-bottom:7px; color:#ff2626; font-weight:900; font-size:16px; letter-spacing:0.3px;}
+    .coupon-input-row { display:flex; gap:7px; }
+    .coupon-input-row input { flex:1; padding:9px 11px; border-radius:7px; border:1px solid #ff0000; background:#1a181b; color:#fff; font-size:14px; }
+    .apply-btn { padding:9px 15px; background:#d60000; border:none; border-radius:7px; color:#fff; font-weight:900; cursor:pointer; font-size:14px; transition:background .2s; }
+    .apply-btn:hover { background:#ff2626; }
+    .coupon-msg { padding:6px 10px; border-radius:6px; font-size:12px; font-weight:700; text-align:center; margin-top:7px; }
+    .coupon-success { background:#102b15; border:1px solid #19bf00; color:#19bf00; }
+    .coupon-error { background:#2d1919; border:1px solid #ff2222; color:#ff2222; }
+
+    :root{ --bg:#000000; --panel:#0f0f10; --card:#0f0f12; --accent:#c70000c4; --accent-2:#c70000c4; --muted:#9a9a9a; }
+    body{margin:0;background:var(--bg);color:#fff;font-family:"Segoe UI",sans-serif;direction:rtl}
+    .header,footer{background:var(--panel);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #151515}
+    .logo{color:var(--accent);font-weight:800;font-size:22px}
+    footer{border-top:1px solid rgba(255,255,255,0.05);justify-content:center;color:var(--muted);margin-top:40px}
+
+    .container{display:flex;gap:20px;max-width:1200px;margin:90px auto 40px;padding:0 20px}
+    .products{flex:2;background:var(--card);border-radius:12px;padding:20px}
+    .summary{flex:1;background:var(--card);border-radius:12px;padding:20px;height:fit-content}
+
+    .prod{display:flex;align-items:center;gap:14px;padding:12px;border-bottom:1px solid rgba(255,255,255,0.05)}
+    .prod img{width:70px;height:60px;object-fit:cover;border-radius:8px}
+    .prod-info{flex:1}
+    .prod-info h4{margin:0;font-size:15px;font-weight:700}
+    .prod-info p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+    .prod-total{font-weight:800;color:#fff}
+
+    .total{font-size:18px;font-weight:800;margin:16px 0;color:var(--accent)}
+    .method{display:flex;align-items:center;gap:10px;background:#101012;padding:10px;border-radius:10px;margin-bottom:12px;cursor:pointer}
+    .method input{margin-left:6px;transform:scale(1.2)}
+    .method img{width:36px;height:36px;border-radius:6px;object-fit:cover}
+    .btn-check{width:100%;padding:14px;border-radius:10px;border:0;background:var(--accent);color:#fff;font-weight:800;cursor:pointer}
+    .btn-check:hover{background:var(--accent-2)}
+
+    @media(max-width:800px){ .container{flex-direction:column} }
+
+    .debug-btn {
+      background: #666;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 12px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo">AIMHACK</div>
+    <div style="color:var(--muted);font-size:14px">الدفع</div>
+  </div>
+
+  <div class="container">
+    <div class="products">
+      <h2>🛒 المنتجات</h2>
+      <div id="cartItems" aria-live="polite"></div>
+    </div>
+
+    <div class="summary">
+      <div class="side">
+        <div class="box">
+          <h3>⚡ خدمة فورية</h3>
+          استلم المنتج مباشرة بعد الدفع.
+        </div>
+        <div class="box" style="margin-top:12px;">
+          <h3>🔒 أمان كامل</h3>
+          بياناتك محمية ومشفرة أثناء الشراء
+        </div>
+
+        <h3 style="margin-top:14px">💳 الدفع</h3>
+        <div class="total" id="totalPrice">المجموع: 0.00 EGP</div>
+
+        <label class="method" id="methodVodafone">
+          <input type="radio" name="payment" value="Vodafone Cash">
+          <img src="PNG/v11.png" alt="vodafone">
+          <span>فودافون كاش</span>
+        </label>
+
+        <label class="method" id="methodGems">
+          <input type="radio" name="payment" value="جواهر Free Fire">
+          <img src="PNG/v12.png" alt="gems">
+          <span>جواهر / ID</span>
+        </label>
+
+        <label class="method" id="methodBinance">
+          <input type="radio" name="payment" value="Binance">
+          <img src="PNG/v13.jpg" alt="binance">
+          <span>Binance</span>
+        </label>
+
+        <div class="coupon-box" aria-hidden="false">
+          <div class="coupon-header">
+            <i class="fa fa-tag"></i>
+            <span>أدخل كود الخصم</span>
+          </div>
+          <div class="coupon-input-row">
+            <input type="text" id="couponCode" placeholder="كود الخصم..." autocomplete="off">
+            <button class="apply-btn" id="applyCouponBtn" type="button">تطبيق</button>
+          </div>
+          <div id="couponMsg" class="coupon-msg" role="status" aria-live="polite"></div>
+          
+          </button>
+        </div>
+
+        <button class="btn-check" id="confirmBtn">إتمام الطلب ✅</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2025 AIMHACK — للتواصل: 01064061942</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAd5KNh5H6KaQ9nv8FP3keyFRh28zSwfLM",
+    authDomain: "gama-xiter.firebaseapp.com",
+    projectId: "gama-xiter",
+    storageBucket: "gama-xiter.firebasestorage.app",
+    messagingSenderId: "979348178199",
+    appId: "1:979348178199:web:dd66b3d0d00b76fe61a352",
+    measurementId: "G-4Q4P3GTJN5"
+};
+
+let db;
+try {
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    } else {
+        firebase.app();
+    }
+    db = firebase.firestore();
+    console.log('✅ Firebase initialized successfully');
+} catch (error) {
+    console.error('❌ Firebase initialization error:', error);
+}
+
+const params = new URLSearchParams(window.location.search);
+const rawCart = params.get("cart");
+let cart = [];
+
+try {
+  if(rawCart){
+    const decoded = decodeURIComponent(rawCart);
+    const parsed = JSON.parse(decoded);
+    if(Array.isArray(parsed)){
+      parsed.forEach(it=>{
+        const id = Number(it.id) || 0;
+        const qty = Math.max(1, parseInt(it.qty || it.quantity || 1, 10) || 1);
+        const price = Number(it.price) || 0;
+        const title = String(it.title || '').trim();
+        const img = it.img || 'PNG/placeholder.jpg';
+        if(id && title && price >= 0 && qty > 0){
+          cart.push({ id, title, price, qty, img });
+        }
+      });
+    }
+  }
+} catch(e){
+  console.error('Cart parsing error:', e);
+}
+
+const cartItems = document.getElementById("cartItems");
+const totalPrice = document.getElementById("totalPrice");
+let originalTotal = 0.0;
+let currentTotal = 0.0;
+let appliedCouponKey = null;
+let appliedCouponData = null;
+
+function renderCart(){
+  cartItems.innerHTML = '';
+  originalTotal = 0;
+  if(!Array.isArray(cart) || cart.length === 0){
+    const p = document.createElement('div'); p.className='prod'; p.innerHTML = '<div style="color:var(--muted);padding:12px">السلة فارغة</div>';
+    cartItems.appendChild(p);
+    totalPrice.textContent = 'المجموع: 0.00 EGP';
+    return;
+  }
+  cart.forEach(item=>{
+    const div = document.createElement('div');
+    div.className = 'prod';
+    const img = document.createElement('img'); img.src = item.img; img.alt = item.title || 'product';
+    const info = document.createElement('div'); info.className='prod-info';
+    const h4 = document.createElement('h4'); h4.textContent = item.title;
+    const p = document.createElement('p'); p.textContent = item.price + ' × ' + item.qty;
+    info.appendChild(h4); info.appendChild(p);
+    const tot = document.createElement('div'); tot.className='prod-total'; tot.textContent = (Number(item.price) * Number(item.qty)).toFixed(2) + ' EGP';
+    div.appendChild(img); div.appendChild(info); div.appendChild(tot);
+    cartItems.appendChild(div);
+    originalTotal += Number(item.price) * Number(item.qty);
+  });
+  currentTotal = originalTotal;
+  totalPrice.textContent = 'المجموع: ' + originalTotal.toFixed(2) + ' EGP';
+}
+renderCart();
+
+async function applyCouponCode(code) {
+    const key = String(code || '').trim().toUpperCase();
+    console.log('🔍 البحث عن الكوبون:', key);
+    
+    if(!key) return { ok:false, msg:'ادخل كود' };
+    
+    try {
+        if (!db) {
+            console.error('❌ Firebase غير متصل');
+            return { ok:false, msg:'نظام الخصم غير متاح حالياً' };
+        }
+
+        const querySnapshot = await db.collection('coupons').where('code', '==', key).get();
+        
+        console.log('📊 نتائج البحث:', querySnapshot.size, 'كوبون وجد');
+        
+        if (querySnapshot.empty) {
+            return { ok: false, msg: 'كود خصم غير صحيح' };
+        }
+        
+        const couponDoc = querySnapshot.docs[0];
+        const coupon = couponDoc.data();
+        console.log('✅ الكوبون موجود:', coupon);
+        
+        const now = new Date();
+        
+        if (coupon.isActive === false) {
+            return { ok:false, msg:'الكوبون غير نشط' };
+        }
+        
+        if (coupon.startDate) {
+            const startDate = new Date(coupon.startDate);
+            if (startDate > now) {
+                return { ok:false, msg:'الكوبون لم يبدأ بعد' };
+            }
+        }
+        
+        if (coupon.endDate) {
+            const endDate = new Date(coupon.endDate);
+            if (endDate < now) {
+                return { ok:false, msg:'الكوبون منتهي الصلاحية' };
+            }
+        }
+        
+        if (coupon.usageLimit && (coupon.usedCount || 0) >= coupon.usageLimit) {
+            return { ok:false, msg:'تم استخدام الكوبون لأقصى حد' };
+        }
+        
+        let discountAmount = 0;
+        let newTotal = originalTotal;
+        
+        if (coupon.discountType === 'percent') {
+            const perc = Math.min(100, Number(coupon.discountValue) || 0);
+            discountAmount = Math.round(originalTotal * perc / 100);
+            newTotal = Math.max(0, originalTotal - discountAmount);
+        } else {
+            const amount = Number(coupon.discountValue) || 0;
+            discountAmount = Math.min(amount, originalTotal);
+            newTotal = Math.max(0, originalTotal - discountAmount);
+        }
+        
+        const newUsedCount = (coupon.usedCount || 0) + 1;
+        
+        await couponDoc.ref.update({
+            usedCount: newUsedCount,
+            lastUsed: new Date().toISOString()
+        });
+        
+        const discountText = coupon.discountType === 'percent' ? 
+            `تم تطبيق خصم ${coupon.discountValue}%` : 
+            `تم تطبيق خصم ${coupon.discountValue} جنيه`;
+        
+        return {
+            ok: true,
+            discountAmount: discountAmount,
+            text: discountText,
+            couponKey: key,
+            couponType: coupon.discountType,
+            couponValue: coupon.discountValue,
+            original: originalTotal,
+            total: newTotal
+        };
+        
+    } catch (error) {
+        console.error('❌ Error applying coupon:', error);
+        return { ok: false, msg: 'حدث خطأ في تطبيق الكوبون' };
+    }
+}
+
+document.getElementById('applyCouponBtn').addEventListener('click', async function(){
+    try {
+        const code = document.getElementById('couponCode').value;
+        const safe = String(code).trim();
+        
+        if (!safe) {
+            const msgEl = document.getElementById('couponMsg');
+            msgEl.className = 'coupon-msg coupon-error';
+            msgEl.textContent = '❌ ادخل كود الخصم';
+            return;
+        }
+        
+        const applyBtn = document.getElementById('applyCouponBtn');
+        const originalText = applyBtn.innerHTML;
+        applyBtn.innerHTML = '<div class="loading"></div> جاري التطبيق...';
+        applyBtn.disabled = true;
+        
+        const res = await applyCouponCode(safe);
+        
+        const msgEl = document.getElementById('couponMsg');
+        if(res.ok){
+            currentTotal = Number(res.total);
+            appliedCouponKey = res.couponKey || null;
+            appliedCouponData = res;
+            
+            msgEl.className = 'coupon-msg coupon-success';
+            msgEl.textContent = '🎉 ' + res.text + ' — توفير: ' + res.discountAmount + ' جنيه';
+            totalPrice.innerHTML = `المجموع: <span style="text-decoration:line-through;color:#666">${res.original.toFixed(2)} EGP</span> ${res.total.toFixed(2)} EGP`;
+        } else {
+            currentTotal = originalTotal;
+            appliedCouponKey = null;
+            appliedCouponData = null;
+            msgEl.className = 'coupon-msg coupon-error';
+            msgEl.textContent = '❌ ' + res.msg;
+            totalPrice.textContent = 'المجموع: ' + currentTotal.toFixed(2) + ' EGP';
+        }
+    } catch(e){
+        console.error('Coupon application error:', e);
+        const msgEl = document.getElementById('couponMsg');
+        msgEl.className = 'coupon-msg coupon-error';
+        msgEl.textContent = '❌ حدث خطأ غير متوقع';
+    } finally {
+        const applyBtn = document.getElementById('applyCouponBtn');
+        applyBtn.innerHTML = 'تطبيق';
+        applyBtn.disabled = false;
+    }
+});
+
+document.getElementById('confirmBtn').addEventListener('click', function(){
+    try {
+        const methodEl = document.querySelector("input[name='payment']:checked");
+        if(!methodEl){ alert('⚠️ اختر وسيلة الدفع'); return; }
+        const method = String(methodEl.value || '').trim();
+
+        const original = Number(originalTotal || 0);
+        const total = Number(currentTotal || original);
+        const couponKey = appliedCouponKey || '';
+        const discountAmount = appliedCouponData ? appliedCouponData.discountAmount : 0;
+        const discountType = appliedCouponData ? appliedCouponData.couponType : '';
+        const discountValue = appliedCouponData ? appliedCouponData.couponValue : '';
+
+        let finalUrl = '';
+        const cartParam = encodeURIComponent(JSON.stringify(cart));
+        
+        // بناء الـ URL مع تمرير جميع بيانات الخصم
+        const qsParams = new URLSearchParams({
+            cart: cartParam,
+            original: original,
+            total: total,
+            coupon: couponKey
+        });
+        
+        // إضافة بيانات الخصم فقط إذا كان هناك خصم
+        if (discountAmount > 0) {
+            qsParams.append('discount', discountAmount);
+            qsParams.append('discount_value', discountValue);
+            qsParams.append('type', discountType);
+        }
+        
+        const qs = qsParams.toString();
+
+        if(method === 'Vodafone Cash') finalUrl = `final_vodafone.html?${qs}`;
+        else if(method === 'جواهر Free Fire') finalUrl = `final_gems.html?${qs}`;
+        else if(method === 'Binance') finalUrl = `final_binance.html?${qs}`;
+        else { alert('⚠️ وسيلة الدفع غير مدعومة'); return; }
+
+        if(total < 0) { alert('خطأ بالمبلغ النهائي'); return; }
+
+        console.log('🔄 الانتقال إلى:', finalUrl);
+        console.log('💰 البيانات المرسلة:', {
+            original: original,
+            total: total,
+            coupon: couponKey,
+            discountAmount: discountAmount,
+            discountType: discountType,
+            discountValue: discountValue
+        });
+
+        window.location.href = finalUrl;
+    } catch(e){
+        console.error('Error in checkout:', e);
+        alert('حدث خطأ، حاول لاحقًا');
+    }
+});
+
+document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+document.onkeydown = function(e){
+    if(e.keyCode === 123 || (e.ctrlKey && e.key === 'u') || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C'))){
+        e.preventDefault();
+        return false;
+    }
+};
+
+window.addEventListener('load', function() {
+    console.log('🚀 صفحة الدفع جاهزة');
+});
+</script>
+
+</body>
+</html>

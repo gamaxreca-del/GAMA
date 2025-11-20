@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>الدفع جواهر — AIMHACK</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-blue: #00a8ff;
+      --primary-green: #00b800;
+      --dark-bg: #000;
+      --darker-bg: #121214;
+      --card-bg: #151518;
+      --input-bg: #1f1f23;
+      --text-light: #ffffffbe;
+      --border-radius: 14px;
+      --transition: 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body { 
+      margin:0; 
+      background:var(--dark-bg); 
+      color:#fff; 
+      font-family:"Segoe UI",sans-serif; 
+      direction:rtl; 
+    }
+    
+    .header { 
+      background:var(--dark-bg); 
+      padding:16px 28px; 
+      display:flex; 
+      justify-content:space-between; 
+      align-items:center; 
+      border-bottom:1px solid var(--primary-blue); 
+    }
+    
+    .logo { 
+      color:var(--primary-blue); 
+      font-weight:800; 
+      font-size:22px; 
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .logo i {
+      font-size: 24px;
+    }
+    
+    .container { 
+      max-width:1100px; 
+      margin:30px auto; 
+      padding:0 20px; 
+      display:flex; 
+      gap:20px; 
+    }
+    
+    .main { 
+      flex:3; 
+    }
+    
+    .sidebar { 
+      flex:1; 
+      background:var(--card-bg); 
+      padding:20px; 
+      border-radius:var(--border-radius); 
+      height:fit-content; 
+      position:sticky; 
+      top:20px; 
+      box-shadow:0 0 10px #000; 
+    }
+    
+    .box { 
+      background:var(--darker-bg); 
+      padding:20px; 
+      border-radius:var(--border-radius); 
+      margin-bottom:20px; 
+      box-shadow:0 0 10px #000; 
+      transition: var(--transition);
+    }
+    
+    .box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 168, 255, 0.1);
+    }
+    
+    .product { 
+      display:flex; 
+      gap:15px; 
+      align-items:center; 
+      margin-bottom:12px; 
+    }
+    
+    .product img { 
+      width:90px; 
+      height:70px; 
+      border-radius:10px; 
+      object-fit:cover; 
+    }
+    
+    .product-info h2 { 
+      margin:0; 
+      font-size:16px; 
+    }
+    
+    .product-info p { 
+      margin:4px 0; 
+      color:var(--text-light); 
+      font-size:13px; 
+    }
+    
+    .price { 
+      color:#fff; 
+      font-weight:700; 
+      font-size:14px; 
+    }
+    
+    .pay-box { 
+      background:var(--input-bg); 
+      padding:12px; 
+      border-radius:10px; 
+      margin-top:10px; 
+      font-size:14px; 
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .pay-box img { 
+      width:45px; 
+      height:45px; 
+      border-radius:6px; 
+      margin-left:8px; 
+      vertical-align:middle; 
+    }
+    
+    .copy-btn { 
+      margin-top:10px; 
+      padding:8px 12px; 
+      background:#333; 
+      border:none; 
+      border-radius:6px; 
+      color:#b9b9b9ad; 
+      font-size:13px; 
+      cursor:pointer; 
+      transition:0.3s; 
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .copy-btn:hover { 
+      background:#555; 
+    }
+    
+    .form-group { 
+      margin:12px 0; 
+    }
+    
+    label { 
+      display:block; 
+      margin-bottom:6px; 
+      color:#ccc; 
+      font-size:14px; 
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    input,textarea { 
+      width:100%; 
+      padding:10px; 
+      border-radius:8px; 
+      border:none; 
+      background:var(--input-bg); 
+      color:#cacacad3; 
+      font-size:14px; 
+      transition: var(--transition);
+    }
+    
+    input:focus, textarea:focus {
+      outline: 1px solid var(--primary-blue);
+    }
+    
+    textarea { 
+      resize:none; 
+      height:70px; 
+    }
+    
+    input[type="file"] { 
+      background:none; 
+      padding:5px; 
+      color:#ccc; 
+    }
+    
+    .btn { 
+      display:block; 
+      width:100%; 
+      padding:14px; 
+      background:var(--primary-blue); 
+      border:none; 
+      border-radius:10px; 
+      color:#fff; 
+      font-weight:700; 
+      cursor:pointer; 
+      font-size:15px; 
+      margin-top:15px; 
+      transition:0.18s; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn:hover { 
+      background:var(--primary-green); 
+      color:#000; 
+    }
+    
+    .loading { 
+      display:none; 
+      text-align:center; 
+      margin-top:15px; 
+      color:#aaa; 
+    }
+    
+    .summary h3 { 
+      margin-top:0; 
+      color:#fff; 
+      font-size:18px; 
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .summary p { 
+      margin:6px 0; 
+      font-size:14px; 
+    }
+    
+    .total { 
+      color:#fff; 
+      font-weight:800; 
+      font-size:16px; 
+    }
+    
+    .instructions { 
+      margin-top:20px; 
+      padding:15px; 
+      background:var(--input-bg); 
+      border-radius:10px; 
+      font-size:14px; 
+      line-height:1.7; 
+      color:#ccc; 
+    }
+    
+    .instructions h4 { 
+      margin-top:0; 
+      color:#ffcc00; 
+      font-size:15px; 
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .instructions ul { 
+      padding-right:18px; 
+    }
+    
+    .instructions li { 
+      margin-bottom:8px; 
+    }
+    
+    .required-note { 
+      color:#ffdede; 
+      font-size:13px; 
+      margin-top:6px; 
+    }
+    
+    .small { 
+      font-size:13px; 
+      color:#aaa; 
+    }
+    
+    .price-old { 
+      text-decoration: line-through; 
+      color:#777; 
+      margin-right:8px; 
+    }
+    
+    .coupon-area { 
+      padding:12px; 
+      background:#0f0f12; 
+      border-radius:10px; 
+      margin-bottom:12px; 
+    }
+    
+    .warn { 
+      background:#3b0a0a; 
+      padding:10px; 
+      border-radius:8px; 
+      color:#ffdede; 
+      margin-bottom:12px; 
+    }
+    
+    .debug { 
+      font-size:12px; 
+      color:#999; 
+      margin-top:8px; 
+    }
+    
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+    
+    .status-online {
+      background: rgba(0, 184, 0, 0.2);
+      color: #00b800;
+      border: 1px solid #00b800;
+    }
+    
+    .status-offline {
+      background: rgba(0, 168, 255, 0.2);
+      color: #00a8ff;
+      border: 1px solid #00a8ff;
+    }
+    
+    .payment-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      position: relative;
+    }
+    
+    .step-indicator::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      right: 0;
+      left: 0;
+      height: 2px;
+      background: #333;
+      z-index: 1;
+    }
+    
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .step-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #333;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    
+    .step.active .step-number {
+      background: var(--primary-blue);
+    }
+    
+    .step.completed .step-number {
+      background: var(--primary-green);
+    }
+    
+    .step-text {
+      font-size: 12px;
+      color: #aaa;
+      text-align: center;
+    }
+    
+    .step.active .step-text {
+      color: white;
+    }
+    
+    .success-message {
+      background: rgba(0, 184, 0, 0.1);
+      border: 1px solid var(--primary-green);
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      display: none;
+    }
+    
+    .success-message i {
+      font-size: 40px;
+      color: var(--primary-green);
+      margin-bottom: 10px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        position: static;
+      }
+      
+      .product {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .step-indicator {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo">
+      <i class="fas fa-gem"></i>
+      AIMHACK
+    </div>
+    <div>الدفع — جواهر Free Fire</div>
+  </div>
+
+  <div class="container">
+    <div class="main" id="orderDetails"></div>
+    <div class="sidebar summary" id="orderSummary"></div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAd5KNh5H6KaQ9nv8FP3keyFRh28zSwfLM",
+      authDomain: "gama-xiter.firebaseapp.com",
+      projectId: "gama-xiter",
+      storageBucket: "gama-xiter.firebasestorage.app",
+      messagingSenderId: "979348178199",
+      appId: "1:979348178199:web:dd66b3d0d00b76fe61a352",
+      measurementId: "G-4Q4P3GTJN5"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Payment System Configuration
+    let gameId = "........."; // Default ID
+    const adminPhone = "201064061942";
+    const discordWebhook = "https://discord.com/api/webhooks/1431463466069262519/pxgSZuyB3brEeOq1dtA8frnqPKKBcxAckW9SmDXjq9lApWTQukAiBnqd3RtLyOJqjk66";
+    const REPORT_ENDPOINT = '';
+    const MAX_IMAGE_MB = 8;
+
+    // Helper functions
+    function sanitizeInput(v,max=600){ if(v==null) return ''; let s=String(v).replace(/[<>`"]/g,'').trim(); return s.length>max? s.slice(0,max): s; }
+    function isImageFile(file){ if(!file) return false; const allowed=['image/jpeg','image/png','image/jpg']; return allowed.includes(file.type); }
+    function sendReport(obj){ if(!REPORT_ENDPOINT) return; try { const body=JSON.stringify(Object.assign({when:new Date().toISOString(), url: location.href, ua:navigator.userAgent}, obj)); if(navigator.sendBeacon) navigator.sendBeacon(REPORT_ENDPOINT, body); else fetch(REPORT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body,keepalive:true}).catch(()=>{}); } catch(e){} }
+
+    // Firebase Listener for Game ID Updates
+    function setupPaymentListener() {
+      console.log('🎯 بدأ الاستماع لتحديثات Free Fire...');
+      
+      db.collection('paymentNumbers').doc('current')
+        .onSnapshot((doc) => {
+          if (doc.exists) {
+            const numbers = doc.data();
+            console.log('🔄 تحديث في Free Fire ID:', numbers);
+            
+            // Update Game ID
+            gameId = numbers.freefire || "4587554173";
+            
+            // Update UI
+            const gameIdElement = document.getElementById('gameId');
+            if (gameIdElement) {
+              gameIdElement.textContent = gameId;
+            }
+            
+            // Update last update time
+            const lastUpdateElement = document.getElementById('lastUpdate');
+            if (lastUpdateElement) {
+              lastUpdateElement.textContent = new Date().toLocaleTimeString();
+            }
+            
+            console.log('✅ تم تحديث Free Fire ID إلى:', gameId);
+          } else {
+            console.log('⚠️ لا توجد بيانات في Firebase');
+          }
+        }, (error) => {
+          console.error('❌ خطأ في الاستماع لتحديثات Free Fire:', error);
+        });
+    }
+
+    // Read URL parameters
+    const params = new URLSearchParams(window.location.search);
+    let cart = [];
+    
+    if(params.has("cart")){
+      try { 
+        cart = JSON.parse(decodeURIComponent(params.get("cart"))); 
+      } catch(e){ 
+        sendReport({ reason:'cart_parse_error', detail:String(e).slice(0,200) }); 
+        cart = []; 
+      }
+    }
+    
+    const originalParam = params.has('original') ? Number(params.get('original')) : null;
+    const totalParam = params.has('total') ? Number(params.get('total')) : null;
+    
+    // COUPON: accept whatever case; try URL first, then sessionStorage fallback
+    let couponParamRaw = params.has('coupon') ? String(params.get('coupon')).trim() : '';
+    let couponParam = couponParamRaw ? couponParamRaw.toUpperCase() : '';
+    
+    try {
+      if(!couponParam){
+        const stored = sessionStorage.getItem('applied_coupon');
+        if(stored){
+          const obj = JSON.parse(stored);
+          if(obj && obj.key) couponParam = String(obj.key).toUpperCase();
+        }
+      }
+    } catch(e){ /* ignore */ }
+
+    const discountParam = params.has('discount') ? Number(params.get('discount')) : null;
+    const discountValueParam = params.has('discount_value') ? params.get('discount_value') : null;
+    const discountTypeParam = params.has('type') ? String(params.get('type')) : null;
+    const checksumParam = params.has('checksum') ? String(params.get('checksum')) : null;
+
+    // Coupon mapping
+    const couponMap = {
+      "R2": { label: "R1", type: "percent", value: 30 },
+      "R1": { label: "R2", type: "percent", value: 20 },
+      "R3": { label: "R3", type: "percent", value: 30 }
+    };
+
+    // Resolve totals & coupon
+    let originalPrice = (originalParam !== null) ? originalParam : 0;
+    let afterPrice = (totalParam !== null) ? totalParam : originalPrice;
+    let couponUsed = null;
+    let discountAmount = (discountParam !== null) ? discountParam : 0;
+    let discountValue = discountValueParam || '';
+    let discountType = discountTypeParam || '';
+
+    // If checkout passed a coupon code recognized, use it to compute missing fields
+    if(couponParam && couponMap[couponParam]) {
+      couponUsed = couponMap[couponParam];
+      if(!discountType || discountAmount === 0 || afterPrice === originalPrice){
+        if(couponUsed.type === 'percent'){
+          discountType = 'percent';
+          discountValue = couponUsed.value;
+          discountAmount = Math.round(originalPrice * couponUsed.value / 100);
+          afterPrice = Math.max(0, originalPrice - discountAmount);
+        } else {
+          discountType = 'flat';
+          discountValue = couponUsed.value;
+          discountAmount = Math.min(couponUsed.value, originalPrice);
+          afterPrice = Math.max(0, originalPrice - discountAmount);
+        }
+      }
+    } else {
+      // if coupon not recognized but discount/after provided, compute fallback percent
+      if((discountAmount === 0 || discountAmount === null) && originalPrice && typeof afterPrice === 'number'){
+        discountAmount = Math.round(originalPrice - afterPrice);
+        if(originalPrice) discountValue = Math.round(discountAmount / originalPrice * 100);
+        discountType = 'percent';
+      }
+      if(couponParam) couponUsed = { label: couponParam.toUpperCase(), type: discountType || 'unknown', value: discountValue || '' };
+    }
+
+    // rounding safety
+    originalPrice = Number((originalPrice||0).toFixed(2));
+    afterPrice = Number((afterPrice||0).toFixed(2));
+    discountAmount = Number((discountAmount||0).toFixed(2));
+
+    // Render UI
+    const container = document.getElementById("orderDetails");
+    
+    if(!Array.isArray(cart) || cart.length === 0){
+      container.innerHTML = "<div class='box'><p>⚠️ No products in cart.</p></div>";
+    } else {
+      let html = '';
+      
+      // Step indicator
+      html += `
+        <div class="box">
+          <div class="step-indicator">
+            <div class="step active">
+              <div class="step-number">1</div>
+              <div class="step-text">أدخل بياناتك</div>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-text">أرسل التحويل</div>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-text">أرفق السكرين</div>
+            </div>
+            <div class="step">
+              <div class="step-number">4</div>
+              <div class="step-text">تأكيد الطلب</div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      cart.forEach(item => {
+        const img = sanitizeInput(item.img || 'placeholder.png');
+        const title = sanitizeInput(item.name || item.title || 'Product');
+        const price = Number(item.price || 0);
+        const qty = Number(item.qty || 1);
+        
+        html += `
+          <div class="box">
+            <div class="product">
+              <img src="${img}" alt="${title}">
+              <div class="product-info">
+                <h2>${title}</h2>
+<p class="price">${afterPrice.toFixed(2)} EGP</p>
+                <p>الكمية: ${qty}</p>
+              </div>
+            </div>
+            <div class="payment-status">
+              <div class="status-badge status-online">
+                <i class="fas fa-wifi"></i>
+                <span>متصل - يتم التحديث تلقائياً</span>
+              </div>
+              <div class="small">آخر تحديث: <span id="lastUpdate">${new Date().toLocaleTimeString()}</span></div>
+            </div>
+            <div class="pay-box">
+              <i class="fas fa-gamepad" style="font-size: 24px; color: #00a8ff;"></i>
+              <div>
+                <strong>حول علي ID ده: <span id="gameId">${gameId}</span></strong>
+                <br>
+                <button class="copy-btn" onclick="copyGameId()">
+                  <i class="far fa-copy"></i> نسخ الـ ID
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      // coupon display
+      const couponHtml = (couponUsed || couponParam) ? `
+        <div class="form-group">
+          <label><i class="fas fa-tag"></i> الكوبون المستخدم</label>
+          <input type="text" id="couponShow" value="${sanitizeInput((couponUsed && couponUsed.label? couponUsed.label : couponParam) + (discountType === 'percent' && discountValue ? ' (' + discountValue + '%)' : (discountType === 'flat' && discountValue ? ' (' + discountValue + ' EGP)' : '')))}" readonly>
+        </div>
+      ` : '';
+
+      html += `
+        <div class="box">
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> اسمك بالكامل</label>
+            <input type="text" id="custName" autocomplete="name" placeholder="مثال: أحمد علي">
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> رقم تلفونك (mobile)</label>
+            <input type="text" id="custPhone" autocomplete="tel" placeholder="مثال: 010xxxxxxxx">
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-id-card"></i> الـ ID الحولت منو</label>
+            <input type="text" id="gameWallet" placeholder="مثال: 4587554173">
+          </div>
+          <div class="form-group">
+            <label><i class="fab fa-discord"></i> يوزر الديسكورد</label>
+            <input type="text" id="custDiscord" placeholder="مثال: user#1234">
+          </div>
+          <div class="form-group">
+            <label><i class="fab fa-instagram"></i> يوزر الانستجرام</label>
+            <input type="text" id="custInstagram" placeholder="مثال: @yourhandle">
+          </div>
+          ${couponHtml}
+          <div class="form-group">
+            <label><i class="fas fa-camera"></i> سكرين شوت التحويل <span class="required-note">(مطلوب - أرفق صورة تحويل الجواهر)</span></label>
+            <input type="file" id="paymentImg" accept="image/png, image/jpeg">
+          </div>
+          <button class="btn" id="confirmBtn">
+            <i class="fas fa-check-circle"></i> تأكيد الطلب
+          </button>
+          <div class="loading" id="loading">
+            <i class="fas fa-spinner fa-spin"></i> جاري الإرسال...
+          </div>
+          <div class="success-message" id="successMessage">
+            <i class="fas fa-check-circle"></i>
+            <h3>تم تأكيد طلبك بنجاح!</h3>
+            <p>سيتم مراجعة طلبك والتواصل معك قريباً</p>
+          </div>
+          <div id="statusMsg" style="margin-top:10px;font-size:14px;"></div>
+          <div class="debug" id="debugArea"></div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    // Render Sidebar
+    function renderSidebar(){
+      const couponLabel = couponUsed ? (couponUsed.label || couponParam) : (couponParam || 'No coupon');
+      const origStr = originalPrice ? `${originalPrice.toFixed(2)} EGP` : '—';
+      const afterStr = (typeof afterPrice === 'number') ? `${afterPrice.toFixed(2)} EGP` : '—';
+      const discountStr = discountType === 'percent' && discountValue ? `${discountValue}%` : (discountValue ? `${discountValue} EGP` : (discountAmount ? `${discountAmount} EGP` : '—'));
+      
+      document.getElementById("orderSummary").innerHTML = `
+        <h3><i class="fas fa-clipboard-list"></i> ملخص الطلب</h3>
+        <p><i class="fas fa-shopping-bag"></i> المنتجات: <strong>${Array.isArray(cart)?cart.length:0}</strong></p>
+        <p><i class="fas fa-gem"></i> طريقة الدفع: جواهر Free Fire</p>
+        <p class="total"><i class="fas fa-receipt"></i> المبلغ النهائي: ${afterStr}</p>
+        <div class="coupon-area">
+          <div style="font-weight:800;margin-bottom:6px"><i class="fas fa-tag"></i> معلومات الكوبون</div>
+          <div class="small">الكوبون: <strong>${sanitizeInput(couponLabel)}</strong></div>
+          <div style="margin-top:8px" class="small">السعر الأصلي: <span class="price-old">${origStr}</span> بعد الخصم: <strong>${afterStr}</strong></div>
+          <div style="margin-top:8px" class="small">الخصم: <strong>${sanitizeInput(discountStr)}</strong> (${discountAmount} جنيه)</div>
+        </div>
+        <div class="instructions">
+          <h4><i class="fas fa-exclamation-triangle"></i> تعليمات هامة:</h4>
+          <ul>
+            <li>📋 انسخ Free Fire ID وأرسل المبلغ.</li>
+            <li>📸 ارفع صورة إثبات التحويل (مطلوب).</li>
+            <li>✅ اضغط على "تأكيد الطلب".</li>
+            <li>⏳ انتظر حتى يتم التواصل معك.</li>
+            <li>💎 100 جواهر = 50 جنيه</li>
+          </ul>
+        </div>
+      `;
+    }
+    renderSidebar();
+
+    // Copy Game ID
+    function copyGameId(){ 
+      const id = document.getElementById("gameId").textContent.trim(); 
+      navigator.clipboard.writeText(id).then(()=>{ 
+        alert("✅ تم نسخ الـ ID: " + id); 
+      }); 
+    }
+
+    // Confirm order handler
+    async function confirmOrderHandler(){
+      try {
+        const statusEl = document.getElementById('statusMsg');
+        const debugEl = document.getElementById('debugArea');
+        const successMsg = document.getElementById('successMessage');
+        statusEl.textContent = '';
+        debugEl.textContent = '';
+        successMsg.style.display = 'none';
+
+        const name = sanitizeInput(document.getElementById("custName")?.value || '');
+        const phone = sanitizeInput(document.getElementById("custPhone")?.value || '');
+        const wallet = sanitizeInput(document.getElementById("gameWallet")?.value || '');
+        const discordUser = sanitizeInput(document.getElementById("custDiscord")?.value || '');
+        const instagram = sanitizeInput(document.getElementById("custInstagram")?.value || '');
+        const imgInput = document.getElementById("paymentImg");
+        const screenshot = imgInput && imgInput.files && imgInput.files[0] ? imgInput.files[0] : null;
+
+        // validations
+        if(!name || !phone || !wallet || !discordUser){
+          alert("⚠️ يرجى ملء الاسم، رقم الهاتف، الـ ID واسم المستخدم في الديسكورد.");
+          return;
+        }
+        if(!screenshot){
+          alert("⚠️ يرجى رفع صورة إثبات التحويل (مطلوب).");
+          return;
+        }
+        if(!isImageFile(screenshot)){ 
+          alert("❌ نوع الملف غير مدعوم. يرجى استخدام PNG أو JPG."); 
+          return; 
+        }
+        if(screenshot.size > MAX_IMAGE_MB * 1024 * 1024){ 
+          alert("❌ حجم الصورة كبير جداً. الحد الأقصى " + MAX_IMAGE_MB + "MB."); 
+          return; 
+        }
+
+        document.getElementById("loading").style.display = "block";
+        const confirmBtnEl = document.getElementById("confirmBtn");
+        if(confirmBtnEl) confirmBtnEl.disabled = true;
+
+        // prepare products text
+        let productsText = "";
+        if(Array.isArray(cart) && cart.length){
+          cart.forEach(p => { 
+            productsText += `• ${sanitizeInput(p.name || p.title || 'product')} — ${Number(p.price||0)} EGP (x${Number(p.qty||1)})\n`; 
+          });
+        } else productsText = "No items";
+
+        // coupon strings
+        const couponLabel = couponUsed ? (couponUsed.label || couponParam) : (couponParam ? couponParam : 'No coupon');
+        const discountStr = (discountType === 'percent' && discountValue) ? `${discountValue}% OFF` : (discountValue ? `${discountValue} EGP off` : (discountAmount ? `${discountAmount} EGP off` : '—'));
+        const originalStr = originalPrice ? `${originalPrice.toFixed(2)} EGP` : '—';
+        const afterStr = (typeof afterPrice === 'number') ? `${afterPrice.toFixed(2)} EGP` : '—';
+        const now = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
+
+        // Prepare WhatsApp text
+        const waPlain =
+`💎 طلب جديد — AIMHACK
+👤 الاسم: ${name}
+📱 الهاتف: ${phone}
+🎮 Free Fire ID: ${wallet}
+💬 الديسكورد: ${discordUser}
+📸 الانستجرام: ${instagram || 'لا يوجد'}
+🎟️ الكوبون: ${couponLabel} — ${discountType === 'percent' ? discountValue + '% OFF' : (discountAmount ? discountAmount + ' EGP off' : '—')}
+💰 السعر الأصلي: ${originalStr}
+🔻 الخصم: ${discountAmount} EGP
+💵 السعر النهائي: ${afterStr}
+📦 المنتجات:
+${productsText}
+🕒 الوقت (القاهرة): ${now}
+📎 تم إرسال صورة التحويل إلى الديسكورد.`;
+
+        const waText = encodeURIComponent(waPlain);
+        const waUrl = `https://wa.me/${adminPhone}?text=${waText}`;
+
+        // Open WhatsApp window
+        let waWindow = null;
+        try {
+          waWindow = window.open('about:blank', '_blank');
+        } catch(e){
+          waWindow = null;
+        }
+
+        // Send to Discord webhook
+        let discordOk = false;
+        let discordStatus = null;
+        try {
+          const filename = (screenshot && screenshot.name) ? screenshot.name.replace(/[^\w\.\-]/g,'_').slice(0,120) : 'transfer.jpg';
+          const embed = {
+            title: "💎 طلب جديد — AIMHACK",
+            color: 3447003, // Blue color for Free Fire
+            description: "تم استلام طلب عبر جواهر Free Fire",
+            fields: [
+              { name: "الاسم", value: name || "—", inline: false },
+              { name: "الهاتف", value: phone || "—", inline: false },
+              { name: "Free Fire ID", value: wallet || "—", inline: false },
+              { name: "الديسكورد", value: discordUser || "—", inline: false },
+              { name: "الانستجرام", value: instagram || "—", inline: false },
+              { name: "الكوبون", value: `${couponLabel} — ${discountType === 'percent' ? discountValue + '% OFF' : (discountAmount ? discountAmount + ' EGP off' : '—')}`, inline: false },
+              { name: "السعر الأصلي", value: originalStr, inline: false },
+              { name: "الخصم (EGP)", value: `${discountAmount}`, inline: false },
+              { name: "السعر النهائي", value: afterStr, inline: false },
+              { name: "المنتجات", value: productsText || "—", inline: false },
+              { name: "الوقت (القاهرة)", value: now, inline: false },
+              { name: "صورة التحويل", value: `مرفق: ${filename}`, inline: false }
+            ],
+            image: { url: `attachment://${filename}` }
+          };
+
+          const form = new FormData();
+          form.append('payload_json', JSON.stringify({ username: 'AIMHACK BOT', embeds: [embed] }));
+          form.append('file', screenshot, filename);
+
+          const resp = await fetch(discordWebhook, { method: 'POST', body: form });
+          discordStatus = resp.status;
+          if(resp.ok) {
+            discordOk = true;
+            console.log('Discord webhook send OK', resp.status);
+          } else {
+            console.warn('Discord responded with', resp.status);
+            sendReport({ reason:'discord_send_http_error', status: resp.status });
+          }
+        } catch(err){
+          console.error('Discord send exception', err);
+          sendReport({ reason:'discord_send_exception', detail: String(err).slice(0,400) });
+        }
+
+        // Update WhatsApp window
+        try {
+          if(waWindow && !waWindow.closed){
+            waWindow.location.href = waUrl;
+          } else {
+            window.open(waUrl, '_blank');
+          }
+        } catch(e){
+          window.open(waUrl, '_blank');
+        }
+
+        // Show status
+        const debugLines = [
+          'discord_ok=' + discordOk,
+          'discord_status=' + (discordStatus||'no-response'),
+          'coupon_detected=' + (couponLabel || 'none'),
+          'original=' + originalStr,
+          'discount_egp=' + discountAmount,
+          'final=' + afterStr
+        ].join(' | ');
+        debugEl.textContent = debugLines;
+
+        if(discordOk) {
+          statusEl.innerHTML = '<span style="color:#8ef58e">✅ تم الإرسال إلى الديسكورد بنجاح. يتم فتح الواتساب الآن.</span>';
+          successMsg.style.display = 'block';
+        } else {
+          statusEl.innerHTML = '<span style="color:#ffdede">⚠️ فشل الإرسال إلى الديسكورد. تم فتح الواتساب للمتابعة اليدوية.</span>';
+        }
+
+      } catch(e){
+        console.error("confirm error:", e);
+        sendReport({ reason:'confirm_exception', detail: String(e).slice(0,400) });
+        alert('حدث خطأ أثناء التأكيد. يرجى التحقق من الكونسول أو إعادة المحاولة.');
+      } finally {
+        document.getElementById("loading").style.display = "none";
+        const btn = document.getElementById("confirmBtn");
+        if(btn) btn.disabled = false;
+      }
+    }
+
+    // Event listeners
+    window.addEventListener("DOMContentLoaded", () => {
+      const btn = document.getElementById("confirmBtn");
+      if(btn){
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          confirmOrderHandler();
+        });
+      }
+      
+      // Start Firebase listener
+      setTimeout(setupPaymentListener, 1000);
+    });
+
+    document.addEventListener('click', function(e){
+      const btn = e.target.closest && e.target.closest('#confirmBtn');
+      if(!btn) return;
+      e.preventDefault();
+      confirmOrderHandler();
+    });
+
+    // Fix button if needed
+    window.addEventListener("load", () => {
+      const btn = document.getElementById("confirmBtn");
+      if (!btn) return;
+
+      btn.disabled = false;
+      btn.style.opacity = "1";
+
+      const hasEvent = btn.getAttribute("data-fixed");
+      if (!hasEvent) {
+        btn.addEventListener("click", () => {
+          console.log("✅ الزر اشتغل — تم الضغط عليه");
+        });
+        btn.setAttribute("data-fixed", "true");
+      }
+    });
+
+    // Update time every minute
+    setInterval(() => {
+      const updateEl = document.getElementById('lastUpdate');
+      if(updateEl) {
+        updateEl.textContent = new Date().toLocaleTimeString();
+      }
+    }, 60000);
+  </script>
+</body>
+</html>
